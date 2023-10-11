@@ -1,8 +1,8 @@
 'use client'
+
 import { TreeCategory } from "@/types/types"
 import Link from "next/link";
 import { useState } from "react"
-
 
 export function ItemList({ categories, parentId = null }: { categories: TreeCategory[], parentId?: string | null}) {
   const categoriesToRender = categories.filter(cat => cat.parentId === parentId)
@@ -14,9 +14,9 @@ export function ItemList({ categories, parentId = null }: { categories: TreeCate
       {
         categoriesToRender.map((category) => {
           return (
-            <ul key={category.id} className="pl-6">
+            <li key={category.id} className="pl-6 mb-2">
               <Item category={category} categories={categories}/>
-            </ul>
+            </li>
           )
         })
       }
@@ -29,20 +29,20 @@ export function Item({ category, categories }: { category: TreeCategory, categor
   const hasChildrens = categories.filter(cat => cat.parentId === category.id)
 
   return (
-    <li>
-      { hasChildrens.length !== 0 &&
+    <ul className="my-2">
+      { hasChildrens.length > 1 &&
         <button className="w-3 mr-1" onClick={() => setIsOpen((prev) => !prev)}>
           {
             isOpen ? '-' : '+'
           }
         </button>
       }
-      <Link href={`/${category.id}`} className={`${hasChildrens.length === 0 ? 'ml-4' : ''}`}>
+      <Link href={`/${category.id}`} className={`${hasChildrens.length <= 1 ? 'ml-4' : ''}`}>
         {category.name}
       </Link>
       {
-        isOpen && <ItemList categories={categories} parentId={category.id}/>
+        isOpen && hasChildrens.length > 1 && <ItemList categories={categories} parentId={category.id}/>
       }
-    </li>
+    </ul>
   )
 }
